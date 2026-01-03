@@ -1,9 +1,20 @@
-# Lazy_Bird Frontend
+# Lazy-Bird Web UI
 
-**Status:** ✅ **Included in v2.0** - Production Ready
-**Repository:** Part of lazy-bird core (monorepo structure)
+**Status:** ✅ **Production Ready (v2.0)** - Standalone Repository
+**Repository:** [lazy-bird-ui](https://github.com/yusufkaraaslan/lazy-bird-ui) (Separate from core engine)
+**Core Engine:** [lazy-bird](https://github.com/yusufkaraaslan/lazy-bird)
 
-Modern React dashboard for managing the Lazy_Bird automation system.
+Modern React + TypeScript dashboard for managing the Lazy-Bird automation system.
+
+## 🏗️ Architecture
+
+This is the **standalone Web UI client** for Lazy-Bird, separated from the core engine as part of the v2.0 microservice architecture:
+
+- **lazy-bird** (Core Engine) - FastAPI + PostgreSQL + Celery
+- **lazy-bird-ui** (This Repo) - React + TypeScript + Vite
+- **plane-lazy-bird-integration** - Plane.so integration layer
+
+The Web UI connects to the lazy-bird REST API for all operations.
 
 ## Tech Stack
 
