@@ -21,7 +21,7 @@ interface TestResult {
   duration_seconds: number;
 }
 
-export function ProjectTestHistoryBlock({}: BlockProps) {
+export function ProjectTestHistoryBlock(_props: BlockProps) {
   const selectedProjectId = useDashboardStore((state) => state.selectedProjectId);
   const [testHistory, setTestHistory] = useState<TestResult[]>([]);
   const [loading, setLoading] = useState(true);
@@ -95,9 +95,9 @@ export function ProjectTestHistoryBlock({}: BlockProps) {
 
         setTestHistory(mockData);
         setError(null);
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('Failed to fetch test history:', err);
-        setError(err.message || 'Failed to load test history');
+        setError(err instanceof Error ? err.message : 'Failed to load test history');
       } finally {
         setLoading(false);
       }

@@ -10,7 +10,7 @@ import { agentsApi } from '../../lib/api';
 import type { BlockProps } from '../../config/blockRegistry';
 import type { Agent } from '../../types/api';
 
-export function AgentStatusBlock({}: BlockProps) {
+export function AgentStatusBlock(_props: BlockProps) {
   const [agents, setAgents] = useState<Agent[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -20,9 +20,9 @@ export function AgentStatusBlock({}: BlockProps) {
       const agentsRes = await agentsApi.list();
       setAgents(agentsRes.data.agents || []);
       setError(null);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Failed to fetch agents:', err);
-      setError(err.message || 'Failed to load agents');
+      setError(err instanceof Error ? err.message : 'Failed to load agents');
     } finally {
       setLoading(false);
     }

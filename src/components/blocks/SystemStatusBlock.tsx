@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { Activity, Clock, Server, AlertCircle } from 'lucide-react';
 import { systemApi, queueApi, agentsApi } from '../../lib/api';
 import type { BlockProps } from '../../config/blockRegistry';
+import type { ServiceStatus, Agent } from '../../types/api';
 
 interface SystemStatusData {
   queueDepth: number;
@@ -16,7 +17,7 @@ interface SystemStatusData {
   uptime: number;
 }
 
-export function SystemStatusBlock({}: BlockProps) {
+export function SystemStatusBlock(_props: BlockProps) {
   const [data, setData] = useState<SystemStatusData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -34,8 +35,9 @@ export function SystemStatusBlock({}: BlockProps) {
       const agents = agentsRes.data.agents || [];
 
       // Calculate system health
-      const servicesHealthy = Object.values(systemStatus.services || {}).every(
-        (s: any) => s.status === 'running'
+      const services = Object.values(systemStatus.services || {}) as ServiceStatus[];
+      const servicesHealthy = services.every(
+        (s) => s.status === 'running'
       );
       const resourcesOk =
         systemStatus.resources.cpu_percent < 90 &&
@@ -49,14 +51,14 @@ export function SystemStatusBlock({}: BlockProps) {
 
       setData({
         queueDepth: queueStats.total_tasks || 0,
-        activeAgents: agents.filter((a: any) => a.status === 'working').length,
+        activeAgents: agents.filter((a: Agent) => a.status === 'working').length,
         systemHealth,
-        uptime: Math.max(...Object.values(systemStatus.services || {}).map((s: any) => s.uptime_seconds || 0)),
+        uptime: Math.max(...services.map((s) => s.uptime_seconds || 0)),
       });
       setError(null);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Failed to fetch system status:', err);
-      setError(err.message || 'Failed to load system status');
+      setError(err instanceof Error ? err.message : 'Failed to load system status');
     } finally {
       setLoading(false);
     }

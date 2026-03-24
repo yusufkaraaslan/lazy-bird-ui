@@ -2,6 +2,7 @@
  * API Client for Lazy_Bird Backend
  */
 import axios from 'axios';
+import type { ProjectCreate, Project } from '../types/api';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
@@ -16,8 +17,8 @@ export const api = axios.create({
 export const projectsApi = {
   list: () => api.get('/api/projects'),
   get: (id: string) => api.get(`/api/projects/${id}`),
-  create: (data: any) => api.post('/api/projects', data),
-  update: (id: string, data: any) => api.put(`/api/projects/${id}`, data),
+  create: (data: ProjectCreate) => api.post('/api/projects', data),
+  update: (id: string, data: Partial<Project>) => api.put(`/api/projects/${id}`, data),
   delete: (id: string) => api.delete(`/api/projects/${id}`),
   enable: (id: string) => api.post(`/api/projects/${id}/enable`),
   disable: (id: string) => api.post(`/api/projects/${id}/disable`),
@@ -31,11 +32,11 @@ export const systemApi = {
   stopService: (name: string) => api.post(`/api/system/services/${name}/stop`),
   restartService: (name: string) => api.post(`/api/system/services/${name}/restart`),
   getConfig: () => api.get('/api/system/config'),
-  updateConfig: (data: any) => api.put('/api/system/config', data),
+  updateConfig: (data: Record<string, unknown>) => api.put('/api/system/config', data),
   // Service file management
   get: (path: string) => api.get(path),
-  post: (path: string, data?: any) => api.post(path, data),
-  put: (path: string, data?: any) => api.put(path, data),
+  post: (path: string, data?: Record<string, unknown>) => api.post(path, data),
+  put: (path: string, data?: Record<string, unknown>) => api.put(path, data),
   delete: (path: string) => api.delete(path),
 };
 

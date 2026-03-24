@@ -14,16 +14,16 @@ export interface BlockDefinition {
   description: string;
   icon: LucideIcon;
   component: ComponentType<BlockProps>;
-  defaultConfig?: Record<string, any>;
+  defaultConfig?: Record<string, unknown>;
   availableIn: ('dashboard' | 'analytics' | 'settings')[];
   requiresView?: 'overall' | 'project' | 'agent';
 }
 
 export interface BlockProps {
   blockId: string;
-  config?: Record<string, any>;
+  config?: Record<string, unknown>;
   onRemove?: () => void;
-  onConfigChange?: (config: Record<string, any>) => void;
+  onConfigChange?: (config: Record<string, unknown>) => void;
 }
 
 // Import blocks

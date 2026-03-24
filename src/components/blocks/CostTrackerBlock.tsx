@@ -10,7 +10,7 @@ import { analyticsApi } from '../../lib/api';
 import type { BlockProps } from '../../config/blockRegistry';
 import type { CostAnalytics } from '../../types/api';
 
-export function CostTrackerBlock({}: BlockProps) {
+export function CostTrackerBlock(_props: BlockProps) {
   const [costs, setCosts] = useState<CostAnalytics | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -20,9 +20,9 @@ export function CostTrackerBlock({}: BlockProps) {
       const costsRes = await analyticsApi.getCosts();
       setCosts(costsRes.data);
       setError(null);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Failed to fetch costs:', err);
-      setError(err.message || 'Failed to load cost data');
+      setError(err instanceof Error ? err.message : 'Failed to load cost data');
     } finally {
       setLoading(false);
     }

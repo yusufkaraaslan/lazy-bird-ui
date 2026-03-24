@@ -19,7 +19,7 @@ interface QueueStats {
   failed: number;
 }
 
-export function QueueOverviewBlock({}: BlockProps) {
+export function QueueOverviewBlock(_props: BlockProps) {
   const [stats, setStats] = useState<QueueStats | null>(null);
   const [issues, setIssues] = useState<Issue[]>([]);
   const [loading, setLoading] = useState(true);
@@ -42,9 +42,9 @@ export function QueueOverviewBlock({}: BlockProps) {
       setStats(statsData);
       setIssues(allIssues.slice(0, 5)); // Show top 5
       setError(null);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Failed to fetch queue:', err);
-      setError(err.message || 'Failed to load queue');
+      setError(err instanceof Error ? err.message : 'Failed to load queue');
     } finally {
       setLoading(false);
     }

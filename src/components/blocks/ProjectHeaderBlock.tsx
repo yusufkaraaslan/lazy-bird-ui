@@ -12,7 +12,7 @@ import { useDashboardStore } from '../../store';
 import type { BlockProps } from '../../config/blockRegistry';
 import type { Project } from '../../types/api';
 
-export function ProjectHeaderBlock({}: BlockProps) {
+export function ProjectHeaderBlock(_props: BlockProps) {
   const selectedProjectId = useDashboardStore((state) => state.selectedProjectId);
   const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
@@ -32,9 +32,9 @@ export function ProjectHeaderBlock({}: BlockProps) {
         const response = await projectsApi.get(selectedProjectId);
         setProject(response.data.project);
         setError(null);
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('Failed to fetch project:', err);
-        setError(err.message || 'Failed to load project');
+        setError(err instanceof Error ? err.message : 'Failed to load project');
       } finally {
         setLoading(false);
       }
@@ -59,9 +59,9 @@ export function ProjectHeaderBlock({}: BlockProps) {
       // Refresh project data
       const response = await projectsApi.get(project.id);
       setProject(response.data.project);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Failed to toggle project:', err);
-      alert(`Failed to ${project.enabled ? 'disable' : 'enable'} project: ${err.message}`);
+      alert(`Failed to ${project.enabled ? 'disable' : 'enable'} project: ${err instanceof Error ? err.message : 'Unknown error'}`);
     } finally {
       setUpdating(false);
     }

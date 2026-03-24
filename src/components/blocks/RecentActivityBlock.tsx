@@ -6,6 +6,7 @@
 
 import { useEffect, useState } from 'react';
 import { Activity, CheckCircle2, XCircle, PlayCircle, AlertCircle } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { issuesApi } from '../../lib/api';
 import type { BlockProps } from '../../config/blockRegistry';
 import type { Issue } from '../../types/api';
@@ -15,12 +16,12 @@ interface ActivityEvent {
   type: 'issue_status' | 'test_result' | 'pr_created';
   timestamp: string;
   description: string;
-  icon: any;
+  icon: LucideIcon;
   color: string;
   bg: string;
 }
 
-export function RecentActivityBlock({}: BlockProps) {
+export function RecentActivityBlock(_props: BlockProps) {
   const [events, setEvents] = useState<ActivityEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -81,9 +82,9 @@ export function RecentActivityBlock({}: BlockProps) {
 
       setEvents(activityEvents);
       setError(null);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Failed to fetch activity:', err);
-      setError(err.message || 'Failed to load activity');
+      setError(err instanceof Error ? err.message : 'Failed to load activity');
     } finally {
       setLoading(false);
     }

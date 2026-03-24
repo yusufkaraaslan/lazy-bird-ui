@@ -6,6 +6,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { settingsApi } from '../lib/api';
 import { AlertCircle, CheckCircle, Key, RefreshCw, Shield, Play, Square, RotateCw, Power, ServerCog } from 'lucide-react';
 import { useSystemStatus, useServiceControl } from '../hooks/useSystem';
+import type { ServiceStatus } from '../types/api';
 
 export function SettingsPage() {
   const [token, setToken] = useState('');
@@ -185,7 +186,7 @@ export function SettingsPage() {
                 <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700/50 rounded-lg">
                   <div className="flex items-center gap-2 text-red-800 dark:text-red-200 text-sm">
                     <AlertCircle size={16} />
-                    <span>{(updateToken.error as any)?.response?.data?.error || 'Failed to update token'}</span>
+                    <span>{(updateToken.error as Error & { response?: { data?: { error?: string } } })?.response?.data?.error || 'Failed to update token'}</span>
                   </div>
                 </div>
               )}
@@ -229,7 +230,7 @@ export function SettingsPage() {
           <div className="p-6">
             {systemStatus?.services && Object.entries(systemStatus.services).length > 0 ? (
               <div className="space-y-4">
-                {Object.entries(systemStatus.services).map(([name, service]: [string, any]) => (
+                {Object.entries(systemStatus.services).map(([name, service]: [string, ServiceStatus]) => (
                   <div key={name} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg border border-gray-200 dark:border-gray-700">
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
@@ -303,7 +304,7 @@ export function SettingsPage() {
               <div className="mt-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700/50 rounded-lg">
                 <div className="flex items-center gap-2 text-red-800 dark:text-red-200 text-sm">
                   <AlertCircle size={16} />
-                  <span>{(serviceControl.error as any)?.response?.data?.error || 'Service control failed'}</span>
+                  <span>{(serviceControl.error as Error & { response?: { data?: { error?: string } } })?.response?.data?.error || 'Service control failed'}</span>
                 </div>
               </div>
             )}

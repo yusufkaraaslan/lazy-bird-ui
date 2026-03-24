@@ -21,7 +21,7 @@ interface TimelineEvent {
   status: 'success' | 'failure' | 'info' | 'warning';
 }
 
-export function ProjectTimelineBlock({}: BlockProps) {
+export function ProjectTimelineBlock(_props: BlockProps) {
   const selectedProjectId = useDashboardStore((state) => state.selectedProjectId);
   const [events, setEvents] = useState<TimelineEvent[]>([]);
   const [loading, setLoading] = useState(true);
@@ -62,9 +62,9 @@ export function ProjectTimelineBlock({}: BlockProps) {
 
         setEvents(timelineEvents);
         setError(null);
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('Failed to fetch timeline:', err);
-        setError(err.message || 'Failed to load timeline');
+        setError(err instanceof Error ? err.message : 'Failed to load timeline');
       } finally {
         setLoading(false);
       }

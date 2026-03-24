@@ -8,14 +8,14 @@ import { useEffect, useState } from 'react';
 import { FolderOpen, CheckCircle, XCircle, Clock, AlertCircle } from 'lucide-react';
 import { projectsApi, issuesApi } from '../../lib/api';
 import type { BlockProps } from '../../config/blockRegistry';
-import type { Project } from '../../types/api';
+import type { Project, Issue } from '../../types/api';
 
 interface ProjectWithStats extends Project {
   total_issues: number;
   status: 'active' | 'paused' | 'error';
 }
 
-export function ActiveProjectsBlock({}: BlockProps) {
+export function ActiveProjectsBlock(_props: BlockProps) {
   const [projects, setProjects] = useState<ProjectWithStats[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -37,14 +37,14 @@ export function ActiveProjectsBlock({}: BlockProps) {
               // Determine project status
               let status: 'active' | 'paused' | 'error' = 'active';
               if (!project.enabled) status = 'paused';
-              if (issues.some((i: any) => i.status === 'failed')) status = 'error';
+              if (issues.some((i: Issue) => i.status === 'failed')) status = 'error';
 
               return {
                 ...project,
                 total_issues: issues.length,
                 status,
               };
-            } catch (err) {
+            } catch {
               return {
                 ...project,
                 total_issues: 0,
@@ -56,9 +56,9 @@ export function ActiveProjectsBlock({}: BlockProps) {
 
       setProjects(projectsWithStats);
       setError(null);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Failed to fetch projects:', err);
-      setError(err.message || 'Failed to load projects');
+      setError(err instanceof Error ? err.message : 'Failed to load projects');
     } finally {
       setLoading(false);
     }

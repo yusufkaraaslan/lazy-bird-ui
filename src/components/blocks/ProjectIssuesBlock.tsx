@@ -15,7 +15,7 @@ type StatusFilter = 'all' | 'queued' | 'processing' | 'testing' | 'done' | 'fail
 type ComplexityFilter = 'all' | 'simple' | 'medium' | 'complex';
 type SortBy = 'date' | 'status' | 'complexity';
 
-export function ProjectIssuesBlock({}: BlockProps) {
+export function ProjectIssuesBlock(_props: BlockProps) {
   const selectedProjectId = useDashboardStore((state) => state.selectedProjectId);
   const [issues, setIssues] = useState<Issue[]>([]);
   const [loading, setLoading] = useState(true);
@@ -41,9 +41,9 @@ export function ProjectIssuesBlock({}: BlockProps) {
         const response = await issuesApi.list({ project_id: selectedProjectId });
         setIssues(response.data.issues || []);
         setError(null);
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('Failed to fetch issues:', err);
-        setError(err.message || 'Failed to load issues');
+        setError(err instanceof Error ? err.message : 'Failed to load issues');
       } finally {
         setLoading(false);
       }
@@ -75,9 +75,10 @@ export function ProjectIssuesBlock({}: BlockProps) {
       switch (sortBy) {
         case 'status':
           return a.status.localeCompare(b.status);
-        case 'complexity':
-          const complexityOrder = { simple: 1, medium: 2, complex: 3 };
+        case 'complexity': {
+          const complexityOrder: Record<string, number> = { simple: 1, medium: 2, complex: 3 };
           return (complexityOrder[a.complexity || 'medium'] || 2) - (complexityOrder[b.complexity || 'medium'] || 2);
+        }
         case 'date':
         default:
           return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();

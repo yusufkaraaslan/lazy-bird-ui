@@ -20,7 +20,7 @@ interface CostMetrics {
   trend_percentage: number;
 }
 
-export function ProjectCostBlock({}: BlockProps) {
+export function ProjectCostBlock(_props: BlockProps) {
   const selectedProjectId = useDashboardStore((state) => state.selectedProjectId);
   const [costMetrics, setCostMetrics] = useState<CostMetrics | null>(null);
   const [loading, setLoading] = useState(true);
@@ -51,9 +51,9 @@ export function ProjectCostBlock({}: BlockProps) {
 
         setCostMetrics(mockData);
         setError(null);
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('Failed to fetch cost metrics:', err);
-        setError(err.message || 'Failed to load cost metrics');
+        setError(err instanceof Error ? err.message : 'Failed to load cost metrics');
       } finally {
         setLoading(false);
       }

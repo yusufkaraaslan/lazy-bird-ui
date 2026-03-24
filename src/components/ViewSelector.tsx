@@ -71,9 +71,9 @@ export function ViewSelector() {
             setSelectedProjectId(firstEnabled.id);
           }
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('Failed to fetch projects:', err);
-        setError(err.message || 'Failed to load projects');
+        setError(err instanceof Error ? err.message : 'Failed to load projects');
       } finally {
         setLoading(false);
       }

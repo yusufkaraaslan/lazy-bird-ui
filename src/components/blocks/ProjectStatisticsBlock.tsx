@@ -11,7 +11,7 @@ import { useDashboardStore } from '../../store';
 import type { BlockProps } from '../../config/blockRegistry';
 import type { ProjectAnalytics } from '../../types/api';
 
-export function ProjectStatisticsBlock({}: BlockProps) {
+export function ProjectStatisticsBlock(_props: BlockProps) {
   const selectedProjectId = useDashboardStore((state) => state.selectedProjectId);
   const [analytics, setAnalytics] = useState<ProjectAnalytics | null>(null);
   const [loading, setLoading] = useState(true);
@@ -30,9 +30,9 @@ export function ProjectStatisticsBlock({}: BlockProps) {
         const response = await analyticsApi.getProject(selectedProjectId);
         setAnalytics(response.data);
         setError(null);
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('Failed to fetch project analytics:', err);
-        setError(err.message || 'Failed to load analytics');
+        setError(err instanceof Error ? err.message : 'Failed to load analytics');
       } finally {
         setLoading(false);
       }

@@ -15,7 +15,7 @@ export interface BlockConfig {
   type: string;
   order: number;
   visible: boolean;
-  config?: Record<string, any>;
+  config?: Record<string, unknown>;
 }
 
 interface DashboardState {
@@ -37,7 +37,7 @@ interface DashboardState {
   removeBlock: (blockId: string) => void;
   reorderBlocks: (blockIds: string[]) => void;
   toggleBlockVisibility: (blockId: string) => void;
-  updateBlockConfig: (blockId: string, config: Record<string, any>) => void;
+  updateBlockConfig: (blockId: string, config: Record<string, unknown>) => void;
 
   // Layout presets
   saveLayoutPreset: (name: string) => void;

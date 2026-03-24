@@ -128,7 +128,7 @@ export function ServiceFormPage() {
               <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700/50 rounded-lg">
                 <div className="flex items-center gap-2 text-red-800 dark:text-red-200 text-sm">
                   <AlertCircle size={16} />
-                  <span>{(error as any)?.response?.data?.error || 'Operation failed'}</span>
+                  <span>{(error as Error & { response?: { data?: { error?: string } } })?.response?.data?.error || 'Operation failed'}</span>
                 </div>
               </div>
             )}
