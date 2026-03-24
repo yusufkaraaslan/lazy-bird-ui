@@ -2,8 +2,8 @@
  * React Query hooks for task queue
  */
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { queueApi } from '../lib/api';
-import type { Task, QueueStats } from '../types/api';
+import { queueApi, issuesApi } from '../lib/api';
+import type { Task, QueueStats, Issue } from '../types/api';
 
 export function useQueue(projectId?: string) {
   return useQuery({
@@ -48,5 +48,56 @@ export function useQueueStats() {
       return response.data as QueueStats;
     },
     refetchInterval: 10000, // Refetch every 10 seconds
+  });
+}
+
+export function useIssue(issueNumber: number, projectId?: string) {
+  return useQuery({
+    queryKey: ['issues', issueNumber, projectId],
+    queryFn: async () => {
+      const response = await issuesApi.get(issueNumber, projectId);
+      return response.data as Issue;
+    },
+    enabled: issueNumber > 0,
+    refetchInterval: 10000,
+  });
+}
+
+export function useIssueLogs(issueNumber: number, projectId?: string) {
+  return useQuery({
+    queryKey: ['issues', issueNumber, 'logs', projectId],
+    queryFn: async () => {
+      const response = await issuesApi.getLogs(issueNumber, projectId);
+      return response.data as { content: string };
+    },
+    enabled: false, // Manual fetch only
+  });
+}
+
+export function useRetryIssue() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ issueNumber, projectId }: { issueNumber: number; projectId?: string }) => {
+      await issuesApi.retry(issueNumber, projectId);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['issues'] });
+      queryClient.invalidateQueries({ queryKey: ['queue'] });
+    },
+  });
+}
+
+export function useCancelIssue() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ issueNumber, projectId }: { issueNumber: number; projectId?: string }) => {
+      await issuesApi.cancel(issueNumber, projectId);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['issues'] });
+      queryClient.invalidateQueries({ queryKey: ['queue'] });
+    },
   });
 }

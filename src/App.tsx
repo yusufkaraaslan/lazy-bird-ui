@@ -10,6 +10,7 @@ import { SettingsTab } from './pages/SettingsTab';
 import { ProjectsPage } from './pages/ProjectsPage';
 import { ProjectFormPage } from './pages/ProjectFormPage';
 import { QueuePage } from './pages/QueuePage';
+import { TaskDetailPage } from './pages/TaskDetailPage';
 import { ServicesPage } from './pages/ServicesPage';
 import { ServiceFormPage } from './pages/ServiceFormPage';
 import { SettingsPage } from './pages/SettingsPage';
@@ -77,6 +78,14 @@ function MainLayout() {
               }
             />
             <Route
+              path="queue/:issueId"
+              element={
+                <SettingsPageWrapper>
+                  <TaskDetailPage />
+                </SettingsPageWrapper>
+              }
+            />
+            <Route
               path="services"
               element={
                 <SettingsPageWrapper>
@@ -129,7 +138,7 @@ export default function App() {
   // Apply theme on mount
   useEffect(() => {
     setMode(mode);
-  }, []);
+  }, [mode, setMode]);
 
   return (
     <BrowserRouter>
