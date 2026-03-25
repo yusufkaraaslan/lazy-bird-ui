@@ -4,7 +4,9 @@
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQueue, useQueueStats, useCancelTask } from '../hooks/useQueue';
-import { ExternalLink, X, AlertCircle, Clock, FileText, Search } from 'lucide-react';
+import { ExternalLink, X, Clock, FileText, Search } from 'lucide-react';
+import { LoadingSpinner } from '../components/LoadingSpinner';
+import { ErrorMessage } from '../components/ErrorMessage';
 
 type StatusFilter = 'all' | 'pending' | 'in-progress' | 'completed' | 'completed-no-changes' | 'failed';
 type ComplexityFilter = 'all' | 'simple' | 'medium' | 'complex';
@@ -36,24 +38,11 @@ export function QueuePage() {
   }, [tasks, searchQuery, statusFilter, complexityFilter]);
 
   if (isLoading) {
-    return (
-      <div className="p-8">
-        <div className="text-gray-600 dark:text-gray-400">Loading queue...</div>
-      </div>
-    );
+    return <LoadingSpinner message="Loading queue..." />;
   }
 
   if (error) {
-    return (
-      <div className="p-8">
-        <div className="bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 p-4 rounded-lg">
-          <div className="flex items-center gap-2">
-            <AlertCircle size={20} />
-            <span>Failed to load queue</span>
-          </div>
-        </div>
-      </div>
-    );
+    return <ErrorMessage title="Error" message="Failed to load queue" />;
   }
 
   const handleCancelTask = async (issueId: number) => {

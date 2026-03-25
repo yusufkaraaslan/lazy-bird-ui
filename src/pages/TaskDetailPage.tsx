@@ -3,8 +3,10 @@
  */
 import { useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { ArrowLeft, ExternalLink, RefreshCw, RotateCw, X, AlertCircle } from 'lucide-react';
+import { ArrowLeft, ExternalLink, RefreshCw, RotateCw, X } from 'lucide-react';
 import { useIssue, useIssueLogs, useRetryIssue, useCancelIssue } from '../hooks/useQueue';
+import { LoadingSpinner } from '../components/LoadingSpinner';
+import { ErrorMessage } from '../components/ErrorMessage';
 
 export function TaskDetailPage() {
   const navigate = useNavigate();
@@ -43,11 +45,7 @@ export function TaskDetailPage() {
   };
 
   if (isLoading) {
-    return (
-      <div className="p-8">
-        <div className="text-gray-600 dark:text-gray-400">Loading task...</div>
-      </div>
-    );
+    return <LoadingSpinner message="Loading task..." />;
   }
 
   if (error) {
@@ -61,12 +59,7 @@ export function TaskDetailPage() {
             <ArrowLeft size={20} />
             <span>Back to Queue</span>
           </button>
-          <div className="bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 p-4 rounded-lg">
-            <div className="flex items-center gap-2">
-              <AlertCircle size={20} />
-              <span>Failed to load task #{issueId}</span>
-            </div>
-          </div>
+          <ErrorMessage title="Error" message={`Failed to load task #${issueId}`} />
         </div>
       </div>
     );

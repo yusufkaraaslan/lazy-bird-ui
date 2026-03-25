@@ -5,6 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { useProject, useCreateProject, useUpdateProject } from '../hooks/useProjects';
 import { ProjectForm } from '../components/ProjectForm';
+import { LoadingSpinner } from '../components/LoadingSpinner';
 
 export function ProjectFormPage() {
   const navigate = useNavigate();
@@ -16,11 +17,7 @@ export function ProjectFormPage() {
   const updateProject = useUpdateProject();
 
   if (isEditing && isLoading) {
-    return (
-      <div className="p-8">
-        <div className="text-gray-600 dark:text-gray-400">Loading project...</div>
-      </div>
-    );
+    return <LoadingSpinner message="Loading project..." />;
   }
 
   return (

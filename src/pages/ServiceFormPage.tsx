@@ -4,6 +4,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, AlertCircle } from 'lucide-react';
+import { LoadingSpinner } from '../components/LoadingSpinner';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { systemApi } from '../lib/api';
 
@@ -87,13 +88,7 @@ export function ServiceFormPage() {
   };
 
   if (isLoading) {
-    return (
-      <div className="min-h-full bg-gray-50 dark:bg-gray-900">
-        <div className="max-w-4xl mx-auto py-8 px-4">
-          <div className="text-gray-600 dark:text-gray-400">Loading service...</div>
-        </div>
-      </div>
-    );
+    return <LoadingSpinner message="Loading service..." />;
   }
 
   const error = createService.error || updateService.error;

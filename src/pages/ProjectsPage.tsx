@@ -3,7 +3,9 @@
  */
 import { useNavigate } from 'react-router-dom';
 import { useProjects, useDeleteProject, useToggleProject } from '../hooks/useProjects';
-import { Plus, Edit2, Trash2, Power, AlertCircle } from 'lucide-react';
+import { Plus, Edit2, Trash2, Power } from 'lucide-react';
+import { LoadingSpinner } from '../components/LoadingSpinner';
+import { ErrorMessage } from '../components/ErrorMessage';
 
 export function ProjectsPage() {
   const navigate = useNavigate();
@@ -12,24 +14,11 @@ export function ProjectsPage() {
   const toggleProject = useToggleProject();
 
   if (isLoading) {
-    return (
-      <div className="p-8">
-        <div className="text-gray-600 dark:text-gray-400">Loading projects...</div>
-      </div>
-    );
+    return <LoadingSpinner message="Loading projects..." />;
   }
 
   if (error) {
-    return (
-      <div className="p-8">
-        <div className="bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 p-4 rounded-lg">
-          <div className="flex items-center gap-2">
-            <AlertCircle size={20} />
-            <span>Failed to load projects</span>
-          </div>
-        </div>
-      </div>
-    );
+    return <ErrorMessage title="Error" message="Failed to load projects" />;
   }
 
   const handleToggle = async (id: string, enabled: boolean) => {
