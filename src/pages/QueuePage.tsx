@@ -1,17 +1,39 @@
 /**
  * Queue page - View and manage task queue
  */
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQueue, useQueueStats, useCancelTask } from '../hooks/useQueue';
-import { ExternalLink, X, AlertCircle, Clock, FileText } from 'lucide-react';
+import { ExternalLink, X, AlertCircle, Clock, FileText, Search } from 'lucide-react';
+
+type StatusFilter = 'all' | 'pending' | 'in-progress' | 'completed' | 'completed-no-changes' | 'failed';
+type ComplexityFilter = 'all' | 'simple' | 'medium' | 'complex';
 
 export function QueuePage() {
   const navigate = useNavigate();
   const [selectedProject, setSelectedProject] = useState<string | undefined>(undefined);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
+  const [complexityFilter, setComplexityFilter] = useState<ComplexityFilter>('all');
   const { data: tasks, isLoading, error } = useQueue(selectedProject);
   const { data: stats } = useQueueStats();
   const cancelTask = useCancelTask();
+
+  const filteredTasks = useMemo(() => {
+    if (!tasks) return [];
+    return tasks.filter((task) => {
+      if (searchQuery && !task.title.toLowerCase().includes(searchQuery.toLowerCase())) {
+        return false;
+      }
+      if (statusFilter !== 'all' && task.status !== statusFilter) {
+        return false;
+      }
+      if (complexityFilter !== 'all' && task.complexity !== complexityFilter) {
+        return false;
+      }
+      return true;
+    });
+  }, [tasks, searchQuery, statusFilter, complexityFilter]);
 
   if (isLoading) {
     return (
@@ -41,6 +63,21 @@ export function QueuePage() {
       await cancelTask.mutateAsync(issueId.toString());
     } catch (err) {
       console.error('Cancel failed:', err);
+    }
+  };
+
+  const getStatusColor = (status?: string) => {
+    switch (status) {
+      case 'completed':
+      case 'completed-no-changes':
+        return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
+      case 'failed':
+        return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
+      case 'in-progress':
+        return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
+      case 'pending':
+      default:
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
     }
   };
 
@@ -93,30 +130,85 @@ export function QueuePage() {
           </div>
         )}
 
-      {/* Filter */}
-      {stats && Object.keys(stats.by_project).length > 0 && (
-        <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Filter by Project
-          </label>
-          <select
-            value={selectedProject || ''}
-            onChange={(e) => setSelectedProject(e.target.value || undefined)}
-            className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-          >
-            <option value="">All Projects</option>
-            {Object.keys(stats.by_project).map((projectId) => (
-              <option key={projectId} value={projectId}>
-                {projectId} ({stats.by_project[projectId]} tasks)
-              </option>
-            ))}
-          </select>
+        {/* Filters */}
+        <div className="mb-6 flex flex-wrap items-end gap-4">
+          {/* Search */}
+          <div className="flex-1 min-w-[200px]">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Search</label>
+            <div className="relative">
+              <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search by title..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-9 pr-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+          </div>
+
+          {/* Project filter */}
+          {stats && Object.keys(stats.by_project).length > 0 && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Project</label>
+              <select
+                value={selectedProject || ''}
+                onChange={(e) => setSelectedProject(e.target.value || undefined)}
+                className="px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              >
+                <option value="">All Projects</option>
+                {Object.keys(stats.by_project).map((projectId) => (
+                  <option key={projectId} value={projectId}>
+                    {projectId} ({stats.by_project[projectId]})
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          {/* Status filter */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Status</label>
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value as StatusFilter)}
+              className="px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+            >
+              <option value="all">All Statuses</option>
+              <option value="pending">Pending</option>
+              <option value="in-progress">In Progress</option>
+              <option value="completed">Completed</option>
+              <option value="completed-no-changes">No Changes</option>
+              <option value="failed">Failed</option>
+            </select>
+          </div>
+
+          {/* Complexity filter */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Complexity</label>
+            <select
+              value={complexityFilter}
+              onChange={(e) => setComplexityFilter(e.target.value as ComplexityFilter)}
+              className="px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+            >
+              <option value="all">All</option>
+              <option value="simple">Simple</option>
+              <option value="medium">Medium</option>
+              <option value="complex">Complex</option>
+            </select>
+          </div>
         </div>
-      )}
+
+        {/* Result count */}
+        {tasks && (
+          <div className="mb-3 text-sm text-gray-500 dark:text-gray-400">
+            Showing {filteredTasks.length} of {tasks.length} tasks
+          </div>
+        )}
 
         {/* Tasks List */}
         <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden">
-          {tasks && tasks.length === 0 ? (
+          {filteredTasks.length === 0 ? (
             <div className="text-center py-16">
               <Clock size={56} className="mx-auto text-gray-400 mb-4" />
               <p className="text-lg text-gray-600 dark:text-gray-400 mb-2">No tasks in queue</p>
@@ -130,6 +222,9 @@ export function QueuePage() {
                 <tr>
                   <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">
                     Issue
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">
+                    Status
                   </th>
                   <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">
                     Title
@@ -149,12 +244,19 @@ export function QueuePage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-gray-700/50">
-              {tasks?.map((task) => (
+              {filteredTasks.map((task) => (
                 <tr key={task.issue_id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className="text-sm font-medium text-gray-900 dark:text-white">
                       #{task.issue_id}
                     </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {task.status && (
+                      <span className={`px-2 py-1 text-xs rounded-full ${getStatusColor(task.status)}`}>
+                        {task.status}
+                      </span>
+                    )}
                   </td>
                   <td className="px-6 py-4">
                     <button
