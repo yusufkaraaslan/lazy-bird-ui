@@ -41,10 +41,10 @@ export function ProjectsPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-        <div className="max-w-7xl mx-auto p-6 lg:p-8">
-          <div className="mb-8 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+          <div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Projects</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">Projects</h1>
               <p className="text-gray-600 dark:text-gray-400">Manage your development projects</p>
             </div>
             <button

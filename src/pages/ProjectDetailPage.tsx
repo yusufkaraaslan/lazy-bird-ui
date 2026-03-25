@@ -50,7 +50,7 @@ export function ProjectDetailPage() {
   if (error || !project) {
     return (
       <div className="min-h-full bg-gray-50 dark:bg-gray-900">
-        <div className="max-w-4xl mx-auto py-8 px-4">
+        <div className="max-w-4xl mx-auto py-6 px-4 sm:py-8">
           <button
             onClick={() => navigate('/projects')}
             className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white mb-6 transition-colors"
@@ -80,7 +80,7 @@ export function ProjectDetailPage() {
 
   return (
     <div className="min-h-full bg-gray-50 dark:bg-gray-900">
-      <div className="max-w-4xl mx-auto py-8 px-4">
+      <div className="max-w-4xl mx-auto py-6 px-4 sm:py-8">
         {/* Back button */}
         <button
           onClick={() => navigate('/projects')}
@@ -91,7 +91,7 @@ export function ProjectDetailPage() {
         </button>
 
         {/* Header */}
-        <div className="flex items-start justify-between mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-6">
           <div>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
               {project.name}

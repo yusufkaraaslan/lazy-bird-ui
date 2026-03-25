@@ -53,7 +53,7 @@ export function TaskDetailPage() {
   if (error) {
     return (
       <div className="min-h-full bg-gray-50 dark:bg-gray-900">
-        <div className="max-w-4xl mx-auto py-8 px-4">
+        <div className="max-w-4xl mx-auto py-6 px-4 sm:py-8">
           <button
             onClick={() => navigate('/queue')}
             className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white mb-6 transition-colors"
@@ -70,7 +70,7 @@ export function TaskDetailPage() {
   if (!issue) {
     return (
       <div className="min-h-full bg-gray-50 dark:bg-gray-900">
-        <div className="max-w-4xl mx-auto py-8 px-4">
+        <div className="max-w-4xl mx-auto py-6 px-4 sm:py-8">
           <button
             onClick={() => navigate('/queue')}
             className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white mb-6 transition-colors"
@@ -113,7 +113,7 @@ export function TaskDetailPage() {
 
   return (
     <div className="min-h-full bg-gray-50 dark:bg-gray-900">
-      <div className="max-w-4xl mx-auto py-8 px-4">
+      <div className="max-w-4xl mx-auto py-6 px-4 sm:py-8">
         {/* Back button */}
         <button
           onClick={() => navigate('/queue')}

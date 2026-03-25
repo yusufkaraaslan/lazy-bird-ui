@@ -37,7 +37,7 @@ export function TabNavigation() {
 
   return (
     <nav className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
-      <div className="flex space-x-1 px-6">
+      <div className="flex space-x-1 px-3 sm:px-6">
         {TABS.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -57,7 +57,7 @@ export function TabNavigation() {
               `}
             >
               <Icon className="w-4 h-4" />
-              <span>{tab.label}</span>
+              <span className="hidden sm:inline">{tab.label}</span>
 
               {/* Active indicator */}
               {isActive && animationsEnabled && (

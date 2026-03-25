@@ -91,15 +91,15 @@ export function QueuePage() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="max-w-7xl mx-auto p-6 lg:p-8">
+      <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Task Queue</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">Task Queue</h1>
           <p className="text-gray-600 dark:text-gray-400">View and manage queued tasks</p>
         </div>
 
         {/* Stats Summary */}
         {stats && (
-          <div className="mb-8 grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div className="mb-8 grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
             <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
               <div className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Total Tasks</div>
               <div className="text-3xl font-bold text-gray-900 dark:text-white">{stats.total_tasks}</div>
@@ -196,7 +196,7 @@ export function QueuePage() {
         )}
 
         {/* Tasks List */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden">
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-x-auto">
           {filteredTasks.length === 0 ? (
             <div className="text-center py-16">
               <Clock size={56} className="mx-auto text-gray-400 mb-4" />
