@@ -78,7 +78,10 @@ export function ProjectsPage() {
             <div className="flex items-start justify-between mb-4">
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-2">
-                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+                  <h3
+                    className="text-xl font-semibold text-blue-600 dark:text-blue-400 hover:underline cursor-pointer"
+                    onClick={() => navigate(`/projects/${project.id}`)}
+                  >
                     {project.name}
                   </h3>
                   <span className={`px-2 py-1 text-xs rounded-full ${

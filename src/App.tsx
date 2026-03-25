@@ -8,6 +8,7 @@ import { DashboardTab } from './pages/DashboardTab';
 import { AnalyticsTab } from './pages/AnalyticsTab';
 import { SettingsTab } from './pages/SettingsTab';
 import { ProjectsPage } from './pages/ProjectsPage';
+import { ProjectDetailPage } from './pages/ProjectDetailPage';
 import { ProjectFormPage } from './pages/ProjectFormPage';
 import { QueuePage } from './pages/QueuePage';
 import { TaskDetailPage } from './pages/TaskDetailPage';
@@ -58,6 +59,14 @@ function MainLayout() {
               element={
                 <SettingsPageWrapper>
                   <ProjectFormPage />
+                </SettingsPageWrapper>
+              }
+            />
+            <Route
+              path="projects/:id"
+              element={
+                <SettingsPageWrapper>
+                  <ProjectDetailPage />
                 </SettingsPageWrapper>
               }
             />
