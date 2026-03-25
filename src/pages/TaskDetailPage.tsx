@@ -7,12 +7,14 @@ import { ArrowLeft, ExternalLink, RefreshCw, RotateCw, X } from 'lucide-react';
 import { useIssue, useIssueLogs, useRetryIssue, useCancelIssue } from '../hooks/useQueue';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { ErrorMessage } from '../components/ErrorMessage';
+import { LogViewer } from '../components/LogViewer';
 
 export function TaskDetailPage() {
   const navigate = useNavigate();
   const { issueId } = useParams<{ issueId: string }>();
   const [searchParams] = useSearchParams();
   const projectId = searchParams.get('project') || undefined;
+  const taskRunId = searchParams.get('run') || undefined;
   const issueNumber = Number(issueId) || 0;
 
   const { data: issue, isLoading, error } = useIssue(issueNumber, projectId);
@@ -247,42 +249,48 @@ export function TaskDetailPage() {
             </div>
           ) : (
             <div className="p-6">
-              {/* Logs header */}
-              <div className="mb-4 flex justify-between items-center">
-                <div className="text-sm text-gray-600 dark:text-gray-400">
-                  {logsData ? 'Full log content' : ''}
-                </div>
-                <button
-                  onClick={handleFetchLogs}
-                  disabled={logsLoading}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 flex items-center gap-2"
-                >
-                  <RefreshCw size={16} className={logsLoading ? 'animate-spin' : ''} />
-                  {logsLoading ? 'Loading...' : 'Refresh Logs'}
-                </button>
-              </div>
-
-              {/* Logs content */}
-              {logsLoading ? (
-                <div className="text-center py-8 text-gray-600 dark:text-gray-400">
-                  Loading logs...
-                </div>
-              ) : logsError ? (
-                <div className="text-center py-8 text-gray-600 dark:text-gray-400">
-                  {(logsError as Error & { response?: { status?: number } })?.response?.status === 404
-                    ? 'No logs found for this task yet'
-                    : 'Failed to load logs'}
-                </div>
-              ) : logsData?.content ? (
-                <div className="bg-gray-900 dark:bg-black rounded-lg p-4 overflow-auto max-h-[600px]">
-                  <pre className="text-sm text-gray-100 font-mono whitespace-pre-wrap">
-                    {logsData.content}
-                  </pre>
-                </div>
+              {taskRunId ? (
+                /* Real-time SSE log streaming */
+                <LogViewer taskRunId={taskRunId} />
               ) : (
-                <div className="text-center py-8 text-gray-600 dark:text-gray-400">
-                  No logs available — click Refresh Logs to fetch
-                </div>
+                /* Static log fetching fallback */
+                <>
+                  <div className="mb-4 flex justify-between items-center">
+                    <div className="text-sm text-gray-600 dark:text-gray-400">
+                      {logsData ? 'Full log content' : ''}
+                    </div>
+                    <button
+                      onClick={handleFetchLogs}
+                      disabled={logsLoading}
+                      className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 flex items-center gap-2"
+                    >
+                      <RefreshCw size={16} className={logsLoading ? 'animate-spin' : ''} />
+                      {logsLoading ? 'Loading...' : 'Refresh Logs'}
+                    </button>
+                  </div>
+
+                  {logsLoading ? (
+                    <div className="text-center py-8 text-gray-600 dark:text-gray-400">
+                      Loading logs...
+                    </div>
+                  ) : logsError ? (
+                    <div className="text-center py-8 text-gray-600 dark:text-gray-400">
+                      {(logsError as Error & { response?: { status?: number } })?.response?.status === 404
+                        ? 'No logs found for this task yet'
+                        : 'Failed to load logs'}
+                    </div>
+                  ) : logsData?.content ? (
+                    <div className="bg-gray-900 dark:bg-black rounded-lg p-4 overflow-auto max-h-[600px]">
+                      <pre className="text-sm text-gray-100 font-mono whitespace-pre-wrap">
+                        {logsData.content}
+                      </pre>
+                    </div>
+                  ) : (
+                    <div className="text-center py-8 text-gray-600 dark:text-gray-400">
+                      No logs available — click Refresh Logs to fetch
+                    </div>
+                  )}
+                </>
               )}
             </div>
           )}
